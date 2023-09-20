@@ -1,0 +1,19 @@
+{% extends "base/base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-md-center">
+        <h1 style="text-align:center;">Bem vindo ao Simulador de Testes 0.1</h1>
+        <p>Olá esse sistema tem o objetivo de facilitar os estudos guiados a simulados, oferecendo os modos de estudo e simulado.</p>
+        <p>O modo de estudo oferece acesso a todas as questões (disponíveis no banco de dados) de uma determinada certificação.</p>
+        <p>O modo simulado pretende simular o máximo possível as condições de uma prova, como tempo e pontuação.</p>
+    
+        <div class="col-2">
+            <a href="/study-mode" class="btn btn-primary btn-lg btn-block">Modo Estudo</a>
+        </div>
+        <div class="col-2">
+            <a href="/simulator" class="btn btn-primary btn-lg btn-block">Modo Teste</a>
+        </div>                                                                                                                                                                                                                                  
+    </div>
+{% endblock %}

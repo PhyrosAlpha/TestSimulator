@@ -1,0 +1,42 @@
+{% extends "base/base.html" %}
+{% load utils_tags %}
+
+{% block extrahead %}
+    {% load static %}
+    <link rel="stylesheet" href={% static "css/selected_question.css" %}>
+{% endblock %}
+
+{% block title %} {{question.question_text|truncatewords:4}} {% endblock %}
+
+
+{% block content %}
+    <div class="card mb-2">
+        <div class="card-body">
+            <h5 class="card-title">{{question.question_text|truncatewords:2}}</h5>
+            <p class="card-text">{% render_img_tags question.question_text %}</p>
+            <h6>Alternativas:</h6>
+            <ol type="A">
+                {% for option in question.option_set.all %}
+                    {% if option.is_correct %}
+                        <li class="card-text answer question-correct">{% render_img_tags option.option_text %}</li>
+                    {% else %}
+                        <li class="card-text answer">{% render_img_tags option.option_text %}</li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+            <button class="btn btn-primary" id="show-answers">Mostrar respostas</button>
+        </div>
+
+        {% render_user_question_data user question %}
+
+    </div>
+    <div class="d-flex justify-content-end">
+        {% comment %} <a href="/study-mode/test/{{question.test.id}}" class="btn btn-primary">Voltar</a> {% endcomment %}
+        <button onclick="window.history.back()" class="btn btn-primary">Voltar</button>
+    </div>
+
+
+{% load static %}
+<script src={% static "js/selected_question.js" %}></script>
+
+{% endblock %}

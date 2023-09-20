@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+  
+        {% load bootstrap5 %}
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+
+        {% load static %}
+        <link rel="stylesheet" href={% static "css/base.css" %}>
+
+        {% block extrahead %}{% endblock %}
+
+    </head>
+    <body>
+        {% include "components/header.html" %}
+        <main class="container py-2 px-4">
+            <section class="row justify-content-center">   
+                <div style="max-width: 55rem; width:100%;">
+                    {% block content %}
+            
+                    {% endblock %}
+                </div>
+            </section>
+        </main>
+        {% include "components/footer.html" %}
+    </body>
+    
+</html>

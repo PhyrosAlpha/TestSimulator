@@ -396,3 +396,17 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Python mais
+*.pyc
+env/
+venv/
+bin/
+include/
+lib/
+lib64
+pyvenv.cfg
+
+
+# Databases
+*.sqlite3

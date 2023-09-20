@@ -1,0 +1,7 @@
+.question {
+    display: none;
+}
+
+.show-question {
+    display: block;
+}
