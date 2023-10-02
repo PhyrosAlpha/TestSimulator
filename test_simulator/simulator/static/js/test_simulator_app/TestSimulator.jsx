@@ -12,7 +12,8 @@ const TestSimulator = ({test_id}) => {
 
     React.useEffect( () => {
         async function fetchData() {
-            const response = await fetch("http://127.0.0.1:8000/simulator/test/start/" + test_id);
+            //const response = await fetch(`${window.location.href}/simulator/test/start/` + test_id);
+            const response = await fetch(`http://127.0.0.1:8000/simulator/test/start/` + test_id);
             const data = await response.json();
             testData.current.initTestData(data.test_id, data.questions);
             let result = data.questions.map((question, index) => <

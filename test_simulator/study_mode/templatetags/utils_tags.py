@@ -13,6 +13,14 @@ def render_user_question_data(user, question):
         return {'user': user, 'question': question, 'annotation': result[0].annotation, 'tag': result[0].tag }
     else:
         return {'user': user, 'question': question, 'annotation': ""}
+
+@register.inclusion_tag('render_user_question_icons.html')
+def render_user_question_icons(user, question):
+    result = question.get_user_question_data(user.username)
+    if(result.count() > 0):
+        return {'user': user, 'question': question, 'tag': result[0].tag }
+    else:
+        return {'user': user, 'question': question, 'tag': "NONE"}
     
 @register.simple_tag
 def render_img_tags(text):

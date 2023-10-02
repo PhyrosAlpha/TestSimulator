@@ -10,10 +10,26 @@
     <h4>Descrição</h4>
     <p>{{ test.description }}</p>
 
+    <div class="mb-4">
+        <form method="get" action="">
+            <div class="mb-2">      
+                <label class="form-label">Marcação</label>
+                <select class="form-select" name="tag" id="tag-id" aria-label="Miau">
+                    <option value="" selected>Não Marcada</option>
+                    <option value="UNREAD">Não Lida</option>
+                    <option value="READ">Lida</option>
+                    <option value="IMPORTANT">Importante</option>
+                    <option value="STUDY" >Estudar</option>
+                </select>
+            </div>
+            <button  id="save-btn" class="btn btn-success">Filtrar</button>
+        </form>
+    </div>
+
     <h4>Questões</h4>
     {% for question in current_page.object_list %}
     <div class="card mb-2">
-        { question }
+        {% render_user_question_icons user question %}
         <div class="card-body"> 
             <p><b>{{current_page.start_index|add:forloop.counter0}}</b>. {% render_img_tags question.question_text %}</p>
         </div>

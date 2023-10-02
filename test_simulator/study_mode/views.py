@@ -23,12 +23,16 @@ def study_mode(request):
 def selected_test(request, test):
     page_int = 1
     request_page = request.GET.get('page')
+    request_tag = request.GET.get('tag')
+    print(request_tag)
     if request_page != None:
         page_int = int(request_page)
 
     try:
-        test = Test.objects.get(id=test)  
-        questions = test.question_set.all()
+        test = Test.objects.get(id=test)
+        questions = Question.objects.select_related('User_Question_Data')  
+        # questions = test.question_set.all()
+        
         page = Paginator(questions, 20)
         context = {
             'test': test,

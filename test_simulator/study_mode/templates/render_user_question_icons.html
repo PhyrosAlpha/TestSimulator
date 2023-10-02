@@ -1,0 +1,28 @@
+{% if user.is_authenticated %}
+    <div class="d-flex justify-content-end pt-2 pe-2">
+        {% if tag == 'IMPORTANT' %}
+            <span class="badge bg-danger">Importante</span>
+        {% endif %}
+
+        {% if tag == 'OK' %}
+            <span class="badge bg-success">OK</span>
+        {% endif %}
+
+        {% if tag == 'READ' %}
+            <span class="badge bg-success">Lido</span>
+        {% endif %}
+
+        {% if tag == 'STUDY' %}
+            <span class="badge bg-primary">Estudar</span>
+        {% endif %}
+
+        {% if tag == 'UNREAD' %}
+            <span class="badge bg-secondary">Não lido</span>
+        {% endif %}
+
+        {% if tag == 'NONE' %}
+            <span class="badge bg-secondary">Não marcado</span>
+        {% endif %}
+    </div>
+
+{% endif %}
