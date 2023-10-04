@@ -10,22 +10,23 @@
     <h4>Descrição</h4>
     <p>{{ test.description }}</p>
 
+    {% if user.is_authenticated %}
     <div class="mb-4">
-        <form method="get" action="">
+        <form method="GET" action="">
             <div class="mb-2">      
                 <label class="form-label">Marcação</label>
                 <select class="form-select" name="tag" id="tag-id" aria-label="Miau">
-                    <option value="" selected>Não Marcada</option>
-                    <option value="UNREAD">Não Lida</option>
-                    <option value="READ">Lida</option>
-                    <option value="IMPORTANT">Importante</option>
-                    <option value="STUDY" >Estudar</option>
+                    <option value="TODOS">Todos</option>
+                    <option value="UNREAD" {% if request.GET.tag == 'UNREAD' %}selected{% endif %}>Não Lida</option>
+                    <option value="READ" {% if request.GET.tag == 'READ' %}selected{% endif %}>Lida</option>
+                    <option value="IMPORTANT" {% if request.GET.tag == 'IMPORTANT' %}selected{% endif %}>Importante</option>
+                    <option value="STUDY" {% if request.GET.tag == 'STUDY' %}selected{% endif %}>Estudar</option>
                 </select>
             </div>
             <button  id="save-btn" class="btn btn-success">Filtrar</button>
         </form>
     </div>
-
+    {% endif %}
     <h4>Questões</h4>
     {% for question in current_page.object_list %}
     <div class="card mb-2">
@@ -43,21 +44,21 @@
     <ul class="pagination">
 
         {% if current_page.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{current_page.previous_page_number}}">&laquo;</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{current_page.previous_page_number}}{% if request.GET.tag %}&tag={{request.GET.tag}}{% endif %}">&laquo;</a></li>
         {% else %}
         <li class="page-item disabled"><a class="page-link">&laquo;</a></li>
         {% endif %}
 
         {% for page in current_page.paginator.page_range %}
             {% if page == current_page.number %}
-                <li class="page-item active"><a class="page-link" href="?page={{page}}">{{page}}</a></li>
+                <li class="page-item active"><a class="page-link" href="?page={{page}}{% if request.GET.tag %}&tag={{request.GET.tag}}{% endif %}">{{page}}</a></li>
             {% else %}
-                <li class="page-item"><a class="page-link" href="?page={{page}}">{{page}}</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{page}}{% if request.GET.tag %}&tag={{request.GET.tag}}{% endif %}">{{page}}</a></li>
             {% endif %}
         {% endfor %}
 
         {% if current_page.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{current_page.next_page_number}}">&raquo;</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{current_page.next_page_number}}{% if request.GET.tag %}&tag={{request.GET.tag}}{% endif %}">&raquo;</a></li>
         {% else %}
         <li class="page-item disabled"><a class="page-link">&raquo;</a></li>
         {% endif %}

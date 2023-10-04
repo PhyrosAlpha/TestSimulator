@@ -1,6 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class TestQuerySet(models.QuerySet):
+    pass
+
+class TestManager(models.Manager):
+    pass
+
+
 class Test(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200, null=True, blank=True)
@@ -54,7 +61,7 @@ class UserQuestionData(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     annotation = models.TextField(blank=True)
-    tag = models.CharField(max_length=10, choices=TAGS, default=UNREAD, null=True)
+    tag = models.CharField(max_length=10, choices=TAGS, default=READ, null=True)
 
     class Meta:
         unique_together = ('user', 'question')

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.template import loader
-from tests.models import Test, Question, Option, UserQuestionData
+from tests.models import Test, Question, UserQuestionData
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist as DoesNotExist
 from django.core.paginator import EmptyPage
@@ -24,24 +24,36 @@ def selected_test(request, test):
     page_int = 1
     request_page = request.GET.get('page')
     request_tag = request.GET.get('tag')
-    print(request_tag)
+
+    test = Test.objects.get(id=test)
     if request_page != None:
         page_int = int(request_page)
 
     try:
-        test = Test.objects.get(id=test)
-        questions = Question.objects.select_related('User_Question_Data')  
-        # questions = test.question_set.all()
-        
+        template = loader.get_template('selected_test.html')
+        if(request.GET.get('tag') != None and request.GET.get('tag') != 'TODOS'):
+            if request.user.is_authenticated:
+                questions = []
+                result = UserQuestionData.objects.filter(user=request.user, tag=request_tag, question__test=test)
+                for i in result:
+                    questions.append(i.question)
+                page = Paginator(questions, 10)
+                context = {
+                    'test': test,
+                    'current_page': page.page(page_int),
+                    
+                }
+                return HttpResponse(template.render(context, request)) 
+
+
+        questions = test.question_set.all()
         page = Paginator(questions, 20)
         context = {
             'test': test,
             'current_page': page.page(page_int),
         }
-
-        template = loader.get_template('selected_test.html')
         return HttpResponse(template.render(context, request))
-    
+        
     except DoesNotExist :
         return HttpResponseNotFound("Opa esse test não existe! x.x")
     

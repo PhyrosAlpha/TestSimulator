@@ -6,6 +6,9 @@ from tests.models import Test, Question, Option
 
 from json import dumps
 
+def login(request):
+    template = loader.get_template('login.html')
+    return HttpResponse(template.render())
 
 def home(request):
     template = loader.get_template('home.html')

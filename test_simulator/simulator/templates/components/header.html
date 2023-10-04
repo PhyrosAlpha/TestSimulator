@@ -22,7 +22,7 @@
               {% if user.is_authenticated %}
                   {{user.username}} Está logado
               {% else %}
-                  Não tem ninguém logado
+                  <a href="/login">Login</a>
               {% endif %}
           </div>
         </div>
