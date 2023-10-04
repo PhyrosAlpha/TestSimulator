@@ -8,11 +8,11 @@ from json import dumps
 
 def login(request):
     template = loader.get_template('login.html')
-    return HttpResponse(template.render())
+    return HttpResponse(template.render(request=request))
 
 def home(request):
     template = loader.get_template('home.html')
-    return HttpResponse(template.render())
+    return HttpResponse(template.render(request=request))
 
 def simulator(request):
     if request.GET.__contains__('test'):
