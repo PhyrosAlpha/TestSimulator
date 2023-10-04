@@ -1,9 +1,9 @@
 <h1>Login</h1>
-<form method="POST" action="/login">
+<form method="POST" action="/action_login/">
     {% csrf_token %}
     <div class="mb-3">
-      <label for="user" class="form-label">Usuário</label>
-      <input type="user" name="user" class="form-control" id="user" aria-describedby="emailHelp">
+      <label for="username" class="form-label">Usuário</label>
+      <input type="username" name="username" class="form-control" id="username" aria-describedby="emailHelp">
     </div>
     <div class="mb-3">
       <label for="password" class="form-label">Senha</label>

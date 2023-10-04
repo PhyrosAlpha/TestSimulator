@@ -3,16 +3,36 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.template import loader
 from django.core import serializers
 from tests.models import Test, Question, Option
+from django.contrib.auth import authenticate, login as login_now, logout
 
 from json import dumps
-
-def login(request):
-    template = loader.get_template('login.html')
-    return HttpResponse(template.render(request=request))
 
 def home(request):
     template = loader.get_template('home.html')
     return HttpResponse(template.render(request=request))
+
+def login(request):
+    if(request.user.is_authenticated):
+        return HttpResponseRedirect('/')
+
+    template = loader.get_template('login.html')
+    return HttpResponse(template.render(request=request))
+
+def action_login(request):
+    if(request.user.is_authenticated):
+        return HttpResponseRedirect('/')
+
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None: 
+            login_now(request, user)
+            return HttpResponseRedirect('/')
+
+        return HttpResponseRedirect('/')
+
+    return HttpResponseRedirect('/')
 
 def simulator(request):
     if request.GET.__contains__('test'):
