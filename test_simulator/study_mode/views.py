@@ -1,11 +1,11 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from tests.models import Test, Question, UserQuestionData
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist as DoesNotExist
 from django.core.paginator import EmptyPage
 from json import dumps
+from django.http import Http404
 
 def study_mode(request):
     if request.GET.__contains__('test'):
@@ -24,12 +24,12 @@ def selected_test(request, test):
     page_int = 1
     request_page = request.GET.get('page')
     request_tag = request.GET.get('tag')
-
-    test = Test.objects.get(id=test)
+ 
     if request_page != None:
         page_int = int(request_page)
 
     try:
+        test = Test.objects.get(id=test)
         template = loader.get_template('selected_test.html')
         if(request.GET.get('tag') != None and request.GET.get('tag') != 'TODOS'):
             if request.user.is_authenticated:
@@ -40,8 +40,7 @@ def selected_test(request, test):
                 page = Paginator(questions, 10)
                 context = {
                     'test': test,
-                    'current_page': page.page(page_int),
-                    
+                    'current_page': page.page(page_int)
                 }
                 return HttpResponse(template.render(context, request)) 
 
@@ -55,16 +54,16 @@ def selected_test(request, test):
         return HttpResponse(template.render(context, request))
         
     except DoesNotExist :
-        return HttpResponseNotFound("Opa esse test não existe! x.x")
+        raise Http404()
     
     except EmptyPage:
-        return HttpResponseNotFound("Opa essa página não existe! x.x")
+        raise Http404()
 
 def selected_question(request, question):
     result = Question.objects.filter(id=question)
 
     if len(result) == 0:
-        return HttpResponseNotFound("Opa essa questão não existe! x.x")
+        raise Http404()
     
     question = result[0]
     context = {
@@ -85,9 +84,8 @@ def save_user_question_data(request, question):
         
     except DoesNotExist:
         userData = UserQuestionData(user=request.user, question=question, annotation=request.POST['annotation'])
+        userData.tag = request.POST['tag']
         userData.save()
 
     response = request.POST
     return HttpResponse(dumps(response), content_type='application/json')
-
-

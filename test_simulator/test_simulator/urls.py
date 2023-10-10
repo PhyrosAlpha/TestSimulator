@@ -21,5 +21,6 @@ urlpatterns = [
     path('', include('simulator.urls')),
     path('study-mode/', include('study_mode.urls')),
     path('tests/', include('tests.urls')),
+    path('dashboard/', include('dashboard.urls')),
     path('admin/', admin.site.urls),
 ]

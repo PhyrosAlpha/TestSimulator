@@ -1,10 +1,7 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from django.core import serializers
-from tests.models import Test, Question, Option
+from tests.models import Test
 from django.contrib.auth import authenticate, login as login_now, logout
-
 from json import dumps
 
 def home(request):
@@ -18,7 +15,7 @@ def login(request):
     template = loader.get_template('login.html')
     return HttpResponse(template.render(request=request))
 
-def action_login(request):
+def auth_login(request):
     if(request.user.is_authenticated):
         return HttpResponseRedirect('/')
 
@@ -28,16 +25,22 @@ def action_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None: 
             login_now(request, user)
-            return HttpResponseRedirect('/')
+            if(request.GET.__contains__('next')):
+                return HttpResponseRedirect(request.GET['next'])
 
-        return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/dashboard')
 
+        return HttpResponseRedirect('/login?error=1')
+
+    return HttpResponseRedirect('/')
+
+def auth_logout(request):
+    logout(request)
     return HttpResponseRedirect('/')
 
 def simulator(request):
     if request.GET.__contains__('test'):
         test = request.GET['test']
-        print(test)
         return HttpResponseRedirect('test/' + test)
     
     tests = Test.objects.all()
@@ -87,8 +90,6 @@ def get_test(request, test):
             dict_question['options'].append(dict_option)
         dict_data['questions'].append(dict_question)
     
-    # print(dict_data)
-    # data = serializers.serialize('json', dict_data)
     data = dumps(dict_data)
     return HttpResponse(data, content_type='application/json')
 

@@ -1,0 +1,17 @@
+{% extends "base/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <h1>Dashboard</h1>
+    <div>
+        <p>Olá {{user.username}}, bem vindo ao Test Simulator, aqui você pode alterar a sua senha inicial, e durante o desenvolvimento do sistema novos recursos estarão disponíveis aqui. Aproveite! </p>
+        <div>
+            <a href="/auth/logout">Logout</a>
+        </div>
+        <div>
+            <a href="/dashboard/change_password">Change Password</a>
+        </div>
+    </div>
+{% endblock %}
+

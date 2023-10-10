@@ -20,7 +20,11 @@
           </div>
           <div>
               {% if user.is_authenticated %}
-                  {{user.username}} Está logado
+                  Olá {{user.username}}
+                  <div>
+                    <a class="me-2" href="/dashboard" data-bs-toggle="tooltip" data-bs-placement="top" title="Dashboard"><i style="font-size:25px;" class="bi bi-speedometer"></i></a>
+                    <a href="/auth/logout" data-bs-toggle="tooltip" data-bs-placement="top" title="Logout"><i style="font-size:25px;"  class="bi bi-box-arrow-right"></i></a>
+                  </div>
               {% else %}
                   <a href="/login">Login</a>
               {% endif %}

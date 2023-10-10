@@ -37,6 +37,6 @@
 <script src={% static "js/user_question_data.js" %}></script>
 
 {% else %}
-    <h2>please login</h2>
+    {% include "components/login_please.html" %}
 {% endif %}
 
