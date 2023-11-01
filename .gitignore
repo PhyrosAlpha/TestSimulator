@@ -407,6 +407,8 @@ lib/
 lib64
 Scripts/
 pyvenv.cfg
+static/
+env_settings.py
 
 
 # Databases

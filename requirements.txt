@@ -4,9 +4,12 @@ cssselect==1.2.0
 d==0.2.2
 Django==4.2.4
 django-bootstrap-v5==1.0.11
+django-cors-headers==4.3.0
 djangorestframework==3.14.0
+gunicorn==21.2.0
 lxml==4.9.3
 Markdown==3.4.4
+packaging==23.2
 Pygments==2.16.1
 pyquery==2.0.0
 pytz==2023.3.post1
