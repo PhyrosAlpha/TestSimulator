@@ -66,8 +66,12 @@ const TestSimulator = ({test_id}) => {
         }
     }
 
-    function sendTest() {
+    async function sendTest() {
         console.log("Enviando o teste!");
+        const LINK = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/simulator/test/correct`
+        console.log(LINK);
+        const response = await fetch(LINK, {method: "POST", headers: {
+            "Content-Type": "application/json"}, body:JSON.stringify(testData)});
 
     }
 

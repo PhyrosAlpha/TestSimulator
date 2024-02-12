@@ -58,7 +58,7 @@ class UserQuestionData(models.Model):
         (STUDY, 'Estudar'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('auth.user', on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     annotation = models.TextField(blank=True)
     tag = models.CharField(max_length=10, choices=TAGS, default=READ, null=True)

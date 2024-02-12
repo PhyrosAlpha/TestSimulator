@@ -9,4 +9,5 @@ urlpatterns = [
     path('simulator/', views.simulator, name='simulator'),
     path('simulator/test/<int:test>', views.start_simulator, name='simulator'),
     path('simulator/test/start/<int:test>', views.get_test, name='simulator_start'),
+    path('simulator/test/correct', views.correct_test, name='correct_test')
 ]   
