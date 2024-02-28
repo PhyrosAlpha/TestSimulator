@@ -14,14 +14,8 @@
     <div class="mb-4">
         <form method="GET" action="">
             <div class="mb-2">      
-                <label class="form-label">Marcação</label>
-                <select class="form-select" name="tag" id="tag-id" aria-label="Miau">
-                    <option value="TODOS">Todos</option>
-                    <option value="UNREAD" {% if request.GET.tag == 'UNREAD' %}selected{% endif %}>Não Lida</option>
-                    <option value="READ" {% if request.GET.tag == 'READ' %}selected{% endif %}>Lida</option>
-                    <option value="IMPORTANT" {% if request.GET.tag == 'IMPORTANT' %}selected{% endif %}>Importante</option>
-                    <option value="STUDY" {% if request.GET.tag == 'STUDY' %}selected{% endif %}>Estudar</option>
-                </select>
+                <label for="{{ form.tag.id_for_label }}" class="form-label">Marcação</label>
+                {{ form.tag }}
             </div>
             <button  id="save-btn" class="btn btn-success">Filtrar</button>
         </form>
@@ -35,7 +29,7 @@
             <p><b>{{current_page.start_index|add:forloop.counter0}}</b>. {% render_img_tags question.question_text %}</p>
         </div>
         <div class="d-flex justify-content-end p-2">
-            <a class="btn btn-primary" href="/study-mode/question/{{question.id}}">Visualizar</a>
+            <a class="btn btn-primary" href="/study-mode/test/{{test.id}}/question/{{question.id}}">Visualizar</a>
         </div>
     </div>
     {% endfor %} 
@@ -62,10 +56,7 @@
         {% else %}
         <li class="page-item disabled"><a class="page-link">&raquo;</a></li>
         {% endif %}
-
-
     </ul>
     </nav>
 
 {% endblock %}
-

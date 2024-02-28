@@ -33,7 +33,8 @@ const Modal = ({modalController}) => {
             showModal:(title, message, action= () => {}) =>  {
                 setModalInfo({title:title, message:message, action:action});
                 initModal.show();
-            }
+            },
+            closeModal:() => {initModal.hide()}
         }
     }, []);
 

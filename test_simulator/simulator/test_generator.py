@@ -18,6 +18,7 @@ class TestGenerator:
     def convertToJson(self, questions, test):
         dict_data = {'test_id': test.id, 
                     'name': test.name,
+                    'corrected': False,
                     'questions': []
                     }
 

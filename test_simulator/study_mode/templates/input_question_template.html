@@ -1,42 +1,22 @@
 {% if user.is_authenticated %}
 
-{% csrf_token %}
-
 <div class="p-4">
-    {% if user.is_authenticated %}
+    <form method="POST">
+        {% csrf_token %}
         <div class="mb-2">
-            <label class="form-label">Marcação</label>
-            <select class="form-select" id="tag-id" aria-label="Miau">
-                <option value="" {% if tag == "" %} selected {% endif %}>Não Marcada</option>
-                <option value="UNREAD" {% if tag == "UNREAD" %} selected {% endif %}>Não Lida</option>
-                <option value="READ" {% if tag == "READ" %} selected {% endif %}>Lida</option>
-                <option value="IMPORTANT" {% if tag == "IMPORTANT" %} selected {% endif %}>Importante</option>
-                <option value="STUDY" {% if tag == "STUDY" %} selected {% endif %}>Estudar</option>
-            </select>
+            <label for="{{ form.tag.id_for_label }}" class="form-label">Marcação</label>
+            {{ form.tag }}
         </div>
-    {% endif %}
-    <div class="mb-2">
-        <label class="form-label">Anotação</label>
-        <textarea class="form-control" id="annotation-id" rows="8">{{annotation}}</textarea>
-    </div>
-    <button id="save-btn" class="btn btn-success">Salvar</button>
+        <div class="mb-2">
+            <label for="{{ form.annotation.id_for_label }}" class="form-label">Anotação</label>
+            {{ form.annotation }}
+        </div>
+        <button id="save-btn" type="submit" class="btn btn-success">Salvar</button>
+    </form>
 </div>
 
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11;">
-    <div class="toast align-items-center text-white bg-success border-0" id="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-        <div class="toast-body">
-            Salvo com sucesso!
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-    </div>
-</div>
-
-{% load static %}
-<script src={% static "js/user_question_data.js" %}></script>
+{% include "components/messages_display.html" %}
 
 {% else %}
     {% include "components/login_please.html" %}
 {% endif %}
-

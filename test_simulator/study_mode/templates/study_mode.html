@@ -8,13 +8,11 @@
 
     <h1>Modo de estudo</h1>
     <form class="col-6">
-        <div class="mb-3">
-        <label for="test" class="form-label">Selecione a certificação ou o teste:</label>
-        <select id="test" name="test" class="form-select">
-            {% for test in tests %}
-                <option value="{{test.id}}">{{ test.name }}</option>
-            {% endfor %}
-        </select>
+        <div class="form-group mb-3">
+            <label for="{{ form.test.id_for_label }}" class="form-label">
+                Escolha um teste
+            </label>
+            {{ form.test }}
         </div>
         <button type="submit" class="btn btn-primary">Selecionar</button>
     </form>

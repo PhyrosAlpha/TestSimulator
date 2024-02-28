@@ -7,7 +7,6 @@ class TestQuerySet(models.QuerySet):
 class TestManager(models.Manager):
     pass
 
-
 class Test(models.Model):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200, null=True, blank=True)
@@ -25,6 +24,9 @@ class Question(models.Model):
 
     def getOptions(self):
         return Option.objects.filter(question=self)
+
+    def get_correct_options(self):
+        return Option.objects.filter(is_correct = True, question=self)
     
     def get_user_question_data(self, user):
         return UserQuestionData.objects.filter(user__username=user, question=self)
@@ -58,8 +60,8 @@ class UserQuestionData(models.Model):
         (STUDY, 'Estudar'),
     ]
 
-    user = models.ForeignKey('auth.user', on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    user = models.ForeignKey('auth.user', on_delete=models.CASCADE, null=False)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, null=False)
     annotation = models.TextField(blank=True)
     tag = models.CharField(max_length=10, choices=TAGS, default=READ, null=True)
 

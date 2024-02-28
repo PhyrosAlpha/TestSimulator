@@ -72,6 +72,10 @@ const TestSimulator = ({test_id}) => {
         console.log(LINK);
         const response = await fetch(LINK, {method: "POST", headers: {
             "Content-Type": "application/json"}, body:JSON.stringify(testData)});
+        const data = await response.json()
+        console.log(data);
+        modalController.current.closeModal();
+
 
     }
 
@@ -103,7 +107,6 @@ const TestSimulator = ({test_id}) => {
                 <button className="btn btn-success" onClick={handleSend}>Enviar</button>
             </div>
 
-            {/* <Toast message="Testando" toastController={toastController}/> */}
             <Modal modalController={modalController} />
         </div>
     );
@@ -112,10 +115,15 @@ const TestSimulator = ({test_id}) => {
 class TestData {
     test_id = null;
     questions = [];
+    corrected = false;
 
     constructor() {
         this.test_id = null;
         this.questions = [];
+    }
+
+    insertCorrectedTestData() {
+        
     }
 
     initTestData(test_id, questions) {
