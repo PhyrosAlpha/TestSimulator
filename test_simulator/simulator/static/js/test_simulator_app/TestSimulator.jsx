@@ -1,3 +1,12 @@
+/*
+
+NOTA PARA MIM MESMO:
+
+TEM QUE ARRUMAR O LANCE DAS RESPOSTAS, TA UMA BAGUNÇA PQ MISTURAM AS QUESTÕES SELECIONADAS PELO USUÁRIO
+COM AS QUESTÕES DO CORRETOR.
+
+*/
+
 
 const QUESTIONS_CSS = {
     height:"400px", overflow:"scroll"}
@@ -6,25 +15,27 @@ const TestSimulator = ({test_id}) => {
 
     const [ questions, setQuestions ] = React.useState([]);
     const [ target, setTarget ] = React.useState(0);
-    const testData = React.useRef(new TestData());
-    //const toastController = React.useRef();
+    const testData = React.useRef({});
     const modalController = React.useRef();
+    const [ loading, setLoading ] = React.useState(false)
 
     React.useEffect( () => {
         async function fetchData() {
-            const LINK = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/simulator/test/start/${test_id}`
-            const response = await fetch(LINK);
-            const data = await response.json();
-            testData.current.initTestData(data.test_id, data.questions);
-            let result = data.questions.map((question, index) => <
-            Question 
-                key={index} 
-                questionIndex={index}
-                testData={testData.current}
-                text={question.question_text} 
-                options={question.options} />);
-            setQuestions(result);
+            try {
+                const LINK = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/simulator/test/start/${test_id}`
+                const response = await fetch(LINK);
+                const data = await response.json();
+                
+                testData.current = new TestData(data.test_id, data.questions, false);
+
+                let result = data.questions;
+                setQuestions(result);
+                setLoading(false);
+            } catch(error) {
+                setLoading(false);
+            }
         }
+        setLoading(true);
         fetchData();
     }, [])
 
@@ -66,16 +77,21 @@ const TestSimulator = ({test_id}) => {
         }
     }
 
-    async function sendTest() {
-        console.log("Enviando o teste!");
-        const LINK = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/simulator/test/correct`
-        console.log(LINK);
-        const response = await fetch(LINK, {method: "POST", headers: {
-            "Content-Type": "application/json"}, body:JSON.stringify(testData)});
-        const data = await response.json()
-        console.log(data);
-        modalController.current.closeModal();
+    function sendTest() {
 
+        async function sendTest() {
+            const LINK = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/simulator/test/correct`;
+            const response = await fetch(LINK, {method: "POST", headers: {
+                "Content-Type": "application/json"}, body:JSON.stringify(testData.current)});
+            const data = await response.json();
+            console.log(data);
+            testData.current = new TestData(data.question_id, data.questions, true);
+            testData.current.setPontuation(data.corrects, data.incorrects);
+            modalController.current.closeModal();
+            setLoading(false);
+        }
+        setLoading(true)
+        sendTest();
 
     }
 
@@ -85,29 +101,45 @@ const TestSimulator = ({test_id}) => {
             return <AnswerSheet testData={testData.current} handleJumpToQuestion={handleJumpToQuestion} />
         }
         if(target >= 0 && target < questions.length) {
-            return questions[target]
+            let question = questions[target];
+            return (<Question 
+                        key={target} 
+                        questionIndex={target}
+                        testData={testData.current}
+                        text={question.question_text} 
+                        options={question.options} />)
         }
     }
 
     return (
         <div>
-            <div className="card mb-2">
-                <div className="card-body" style={QUESTIONS_CSS}>
-                    {renderBody()}
+            {loading ? 
+                <div>
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
                 </div>
-            </div>
-            <div className="d-flex justify-content-end mt-2">
-                <button className="btn btn-primary me-2" onClick={handlePrevious} disabled={target == 0}>Anterior</button>
-                { target < questions.length - 1 ?
-                    <button className="btn btn-primary me-2" onClick={handleNext} disabled={target + 1 >= questions.length}>Próxima</button>
-                    :
-                    null
-                }
-                <button className="btn btn-warning me-2" onClick={handleGoAnswerSheet}>Gabarito</button>
-                <button className="btn btn-success" onClick={handleSend}>Enviar</button>
-            </div>
+                :
+                <div>
+                    <div className="card mb-2">
+                        <div className="card-body" style={QUESTIONS_CSS}>
+                            {renderBody()}
+                        </div>
+                    </div>
+                    <div className="d-flex justify-content-end mt-2">
+                        <button className="btn btn-primary me-2" onClick={handlePrevious} disabled={target == 0}>Anterior</button>
+                        { target < questions.length - 1 ?
+                            <button className="btn btn-primary me-2" onClick={handleNext} disabled={target + 1 >= questions.length}>Próxima</button>
+                            :
+                            null
+                        }
+                        <button className="btn btn-warning me-2" onClick={handleGoAnswerSheet}>Gabarito</button>
+                        <button className="btn btn-success" disabled={testData.current.corrected}  onClick={handleSend}>Enviar</button>
+                    </div>
 
-            <Modal modalController={modalController} />
+                    <Modal modalController={modalController} />
+                </div>
+            }
         </div>
     );
 }
@@ -116,19 +148,17 @@ class TestData {
     test_id = null;
     questions = [];
     corrected = false;
+    corrects = 0;
+    incorrects = 0;
 
-    constructor() {
-        this.test_id = null;
-        this.questions = [];
-    }
-
-    insertCorrectedTestData() {
-        
-    }
-
-    initTestData(test_id, questions) {
+    constructor(test_id, questions, corrected) {
         this.test_id = test_id;
-        this._buildQuestions(questions);
+        if(!corrected){
+            this._buildQuestions(questions);
+        }else {
+            this.questions = questions;
+        }
+        this.corrected = corrected;
     }
 
     _buildQuestions(questions) {
@@ -138,6 +168,11 @@ class TestData {
                 answers: []
             })
         })
+    }
+
+    setPontuation(corrects, incorrects) {
+        this.corrects = corrects;
+        this.incorrects = incorrects;
     }
 
     setQuestionAnswerByIndex(index, currentAnswer) {

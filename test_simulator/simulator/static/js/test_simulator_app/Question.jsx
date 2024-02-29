@@ -1,23 +1,46 @@
-const ANSWER_SHEET = {};
-const LETTER = ["A", "B", "C", "D", "E"];
+const ANSWER_SHEET_RED= {padding:"2px 4px", color:"white", backgroundColor:"#dc3545", cursor:"pointer", borderRadius:"5px"};
+const ANSWER_SHEET_BLUE = {padding:"2px 4px", color:"white", backgroundColor:"#0d6efd", cursor:"pointer", borderRadius:"5px"};
+const ANSWER_SHEET_GREEN = {padding:"2px 4px", color:"white", backgroundColor:"green", cursor:"pointer", borderRadius:"5px"};
+const LETTERS = ["A", "B", "C", "D", "E"];
+
 const AnswerSheet = ({testData, handleJumpToQuestion}) => {
 
-    function renderAnswer(answers, index) {
-        let ANSWER_SHEET_ANSWER = {padding:"2px 4px", color:"white", backgroundColor:"#0d6efd", cursor:"pointer", borderRadius:"5px"};
+    function renderQuestions() {
+        return (
+            <div style={{display:"flex", flexWrap:"wrap"}}>
+                    {testData.questions.map((question, index) => {
+                        return renderAnswer(question, index);
+                    })}
+            </div>)
+    }
 
+    function renderAnswer(question, index) {
+        let ANSWER_SHEET_ANSWER = ANSWER_SHEET_BLUE;
+        let answers = question.answers;
         let answerSTR = "";
         if(answers.length > 0) {
             answers.forEach((answer, index) => {
-                answerSTR += LETTER[answer.option_index];
-                if(index < answers.length - 1) {
-                    answerSTR += ", ";
+                if(answer.option_index !== undefined){
+                answerSTR += LETTERS[answer.option_index];
+                    if(index < answers.length - 1) {
+                        answerSTR += ", ";
+                    }
                 }
             });
         }else {
-            ANSWER_SHEET_ANSWER['backgroundColor'] = "#dc3545";
+            ANSWER_SHEET_ANSWER = ANSWER_SHEET_RED
             answerSTR = "Sem resposta";
         }
-        
+
+        //Mode Corrected
+        if(testData.corrected){
+            if(question.is_correct){
+                ANSWER_SHEET_ANSWER = ANSWER_SHEET_GREEN;
+            }else {
+                ANSWER_SHEET_ANSWER = ANSWER_SHEET_RED;
+            }
+        }
+
         return <p style={ANSWER_SHEET_ANSWER} 
                         onClick={() => {handleJumpToQuestion(index)}} 
                         className="ms-2" key={index}>
@@ -25,18 +48,26 @@ const AnswerSheet = ({testData, handleJumpToQuestion}) => {
                         </p>
     }
 
+    //Mode Corrected
+    function renderResult() {
+        if (testData.corrected) {
+            return (
+                <div className="mb-4">
+                    <div>Resultado:</div>
+                    <span className="badge bg-success me-2">Corretas: {testData.corrects}</span>
+                    <span className="badge bg-danger me-2">Incorretas: {testData.incorrects}</span>
+                    <span className="badge bg-primary">Total: {testData.questions.length}</span>
+                </div>)
+        }
+    }
+
     return(
         <div>
             <h3>Gabarito</h3>
-            <div style={{display:"flex", flexWrap:"wrap"}}>
-                {testData.questions.map((question, index) => {
-                    return renderAnswer(question.answers, index);
-                })}
-            </div>
+            {renderResult()}
+            {renderQuestions()}
         </div>
     )
-
-
 }
 
 const Question = ({text, options, questionIndex, testData}) => {
@@ -60,17 +91,21 @@ const Question = ({text, options, questionIndex, testData}) => {
 const Option = ({text, questionIndex, index, testData, option_id}) => {   
     const [marked, setMarked] = React.useState(testData.optionIsMarked(
         questionIndex, 
-        {option_id: option_id, option_index: index}));
+        {option_id: option_id, option_index: index, by_user:true}));
 
     function handleOptionClick() {
-        testData.setQuestionAnswerByIndex(questionIndex, {option_id: option_id, option_index: index});
-        setMarked(!marked);
+        if(testData.corrected){
+            return;
+
+        }else {
+            testData.setQuestionAnswerByIndex(questionIndex, {option_id: option_id, option_index: index, by_user:true});
+            setMarked(!marked);
+        }
     }
 
     return (
         <li style={{cursor:"pointer"}} className={marked ? "answer show-answer" : "answer"} onClick={handleOptionClick}>{getImg(text)}</li>
     )
-
 }
 
 function getImg(text){

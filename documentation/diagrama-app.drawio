@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="wFEMJx3jdFzci3poHyty" name="Page-1">
-        <mxGraphModel dx="2597" dy="601" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2597" dy="494" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -34,11 +34,26 @@
                 <mxCell id="14" value="Corrigir o teste do usuário com base nos dois objetos:&amp;nbsp;&lt;br&gt;&lt;div style=&quot;color: rgb(212, 212, 212); font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(78, 201, 176);&quot;&gt;AnswerSheetTest&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212, 212, 212); font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;span style=&quot;color: #4ec9b0;&quot;&gt;e&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(212, 212, 212); font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; font-size: 14px; line-height: 19px;&quot;&gt;&lt;span style=&quot;color: rgb(78, 201, 176);&quot;&gt;AnswerSheetUser&lt;/span&gt;&lt;span style=&quot;color: rgb(240, 240, 240); font-family: Helvetica; font-size: 12px;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(30, 30, 30); color: rgb(78, 201, 176);&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="237" y="247.5" width="195" height="110" as="geometry"/>
                 </mxCell>
-                <mxCell id="15" value="&lt;b&gt;A questão está correta:&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;- Se as respostas não está vazio&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;- Se todas as respostas estão presentes no gabarito&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;- Se ao final da correção não sobraram respostas no gabarito&lt;/span&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="15" value="&lt;b&gt;A questão está correta:&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;- Se as respostas não está vazio&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;- Se todas as respostas estão presentes no gabarito&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;- Se ao final da correção não sobraram respostas no gabarito&lt;/span&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="467" y="220" width="232" height="165" as="geometry"/>
                 </mxCell>
-                <mxCell id="16" style="edgeStyle=none;html=1;" edge="1" parent="1" source="2" target="2">
+                <mxCell id="16" style="edgeStyle=none;html=1;" parent="1" source="2" target="2" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="AnswerSheet" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="450" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="UserAnswer&lt;br&gt;Sheet" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-50" y="540" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="SystemAnswer&lt;br&gt;Sheet" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="540" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="CorrectedAnswer&lt;br&gt;Sheet" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="540" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="AnswerSheetUtils" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-293" y="450" width="120" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
