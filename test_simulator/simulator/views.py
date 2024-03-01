@@ -7,11 +7,13 @@ from . import test_generator
 from . import test_corrector
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
+from .forms import SelectSimulationTestForm
+#from django.contrib import messages
 
 
 def home(request):
     template = loader.get_template('home.html')
-    return HttpResponse(template.render(request=request))
+    return HttpResponse(template.render())
 
 def login(request):
     if(request.user.is_authenticated):
@@ -35,6 +37,7 @@ def auth_login(request):
 
             return HttpResponseRedirect('/dashboard')
 
+        #messages.error(request, "Senha incorreta")
         return HttpResponseRedirect('/login?error=1')
 
     return HttpResponseRedirect('/')
@@ -44,12 +47,18 @@ def auth_logout(request):
     return HttpResponseRedirect('/')
 
 def simulator(request):
+
+    form = SelectSimulationTestForm()
+    size = request.GET.get('size')
+    print(size)
+
     if request.GET.__contains__('test'):
         test = request.GET['test']
-        return HttpResponseRedirect('test/' + test)
+        return HttpResponseRedirect('test/' + test + '?size=' + size)
     
     tests = Test.objects.all()
     context = {
+        'form': form,
         'tests': tests
     }
 
@@ -74,7 +83,9 @@ def start_simulator(request, test):
 
 
 def get_test(request, test):
-    generator = test_generator.TestGenerator(test, 5)
+    size = request.GET.get('size')
+    print(size)
+    generator = test_generator.TestGenerator(test, 100)
     data = generator.generateTest()
     return HttpResponse(data, content_type='application/json')
 

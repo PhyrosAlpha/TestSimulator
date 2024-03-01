@@ -107,6 +107,7 @@ class CorrectedAnswerSheet(AnswerSheet):
         self.user = user
         self.corrects = 0
         self.incorrects = 0
+        self.corrected = False
         AnswerSheet.__init__(self, test_id, questions)
 
     def __set_corrected_to_true(self):

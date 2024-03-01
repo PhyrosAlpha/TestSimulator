@@ -8,13 +8,20 @@
     <form class="col-6">
         <div class="mb-3">
         <label for="test" class="form-label">Selecione a certificação ou o teste:</label>
-        <select id="test" name="test" class="form-select">
-            {% for test in tests %}
-                <option value="{{test.id}}">{{ test.name }}</option>
-            {% endfor %}
-        </select>
+            {{form.test}}
         </div>
+        <div class="mb-3">
+            <label for="size" class="form-label">Número de questões:</label>
+                {{form.size}}
+            </div>
         <button type="submit" class="btn btn-primary">Selecionar</button>
     </form>
 
 {% endblock %}
+
+
+<!--select id="test" name="test" class="form-select">
+    {% for test in tests %}
+        <option value="{{test.id}}">{{ test.name }}</option>
+    {% endfor %}
+</select-->
