@@ -17,7 +17,9 @@ class SelectSimulationTestForm(forms.Form):
         choices=options,
         widget=modified_select_widget)
     
-    sizes = [(10,"10"),(20,"20"),(30,"30"),(40,"40"),(50,"50"),]
+    sizes = []
+    for n in range(1, 11):
+        sizes.append((n*10, str(n*10)))
 
     size = forms.ChoiceField(
         required=True, 

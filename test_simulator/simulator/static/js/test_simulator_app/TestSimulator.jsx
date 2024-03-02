@@ -1,17 +1,7 @@
-/*
-
-NOTA PARA MIM MESMO:
-
-TEM QUE ARRUMAR O LANCE DAS RESPOSTAS, TA UMA BAGUNÇA PQ MISTURAM AS QUESTÕES SELECIONADAS PELO USUÁRIO
-COM AS QUESTÕES DO CORRETOR.
-
-*/
-
-
 const QUESTIONS_CSS = {
     height:"400px", overflow:"scroll"}
 
-const TestSimulator = ({test_id}) => {
+const TestSimulator = ({test_id, test_size}) => {
 
     const [ questions, setQuestions ] = React.useState([]);
     const [ target, setTarget ] = React.useState(0);
@@ -22,7 +12,7 @@ const TestSimulator = ({test_id}) => {
     React.useEffect( () => {
         async function fetchData() {
             try {
-                const LINK = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/simulator/test/start/${test_id}`
+                const LINK = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/simulator/test/start/${test_id}?size=${test_size}`
                 const response = await fetch(LINK);
                 const data = await response.json();
                 
@@ -67,7 +57,6 @@ const TestSimulator = ({test_id}) => {
         if(isAnswerSheet()) {
             if(!testData.current.checkIfAllQuestionsAreAnswered()){
                 modalController.current.showModal('Ops!', 'Nem todas as questões foram respondidas tem certeza que quer enviar mesmo assim?', sendTest);
-                console.log(testData.current.getTestDataInJson())
             }else {
                 modalController.current.showModal('Ops!', 'Deseja realmente enviar?', sendTest);
             }
@@ -111,16 +100,29 @@ const TestSimulator = ({test_id}) => {
         }
     }
 
+    function renderTestPercent() {
+        if(Object.keys(testData.current).length > 0 ){
+            return testData.current.getTestPercent()
+        }
+        return 0;
+    }
+
     return (
         <div>
             {loading ? 
-                <div>
+                <div className="d-flex justify-content-center">
                     <div className="spinner-border text-primary" role="status">
                         <span className="visually-hidden">Loading...</span>
                     </div>
                 </div>
                 :
                 <div>
+                    <div>
+                        <i className="bi bi-bar-chart-steps"></i>
+                        <div className="progress mb-2" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+                            <div className="progress-bar" style={{width:`${renderTestPercent()}%`}}></div>
+                        </div>
+                    </div>
                     <div className="card mb-2">
                         <div className="card-body" style={QUESTIONS_CSS}>
                             {renderBody()}
@@ -211,6 +213,18 @@ class TestData {
         return result;
     }
 
+    getTestPercent() {
+        let totalQuestions = this.questions.length;
+        let totalRepliedQuestions = 0;
+        for(let question of this.questions) {
+            if(question.answers.length > 0){
+                totalRepliedQuestions += 1;
+            }
+        }
+        let result = (totalRepliedQuestions * 100) / totalQuestions;
+        return result;
+    }
+
     getTestDataInJson() {
         let result = {
             test_id: this.test_id,
@@ -223,6 +237,7 @@ class TestData {
 }
 
 const test_id = document.getElementById('test-id').value;
+const test_size = document.getElementById('test-size').value;
 const rootNode = document.getElementById('root');
 const root = ReactDOM.createRoot(rootNode);
-root.render(React.createElement(TestSimulator, {test_id: test_id}));
+root.render(React.createElement(TestSimulator, {test_id: test_id, test_size: test_size}));

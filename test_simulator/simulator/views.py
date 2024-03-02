@@ -47,11 +47,9 @@ def auth_logout(request):
     return HttpResponseRedirect('/')
 
 def simulator(request):
-
-    form = SelectSimulationTestForm()
+    print("Usuário logado: " + str(request.user.username))
     size = request.GET.get('size')
-    print(size)
-
+    form = SelectSimulationTestForm()
     if request.GET.__contains__('test'):
         test = request.GET['test']
         return HttpResponseRedirect('test/' + test + '?size=' + size)
@@ -67,15 +65,17 @@ def simulator(request):
 
 def start_simulator(request, test):
     print("Usuário logado: " + str(request.user.username))
+    size = request.GET.get('size')
+    print(size)
     if request.user.is_authenticated:
         username = request.user.username
         print(username)
 
     result = Test.objects.filter(id=test)
     test = result[0]
-    print(test)
     context = {
-        'test': test
+        'test': test,
+        'size': size
     }
         
     template = loader.get_template('start_simulator.html')
@@ -84,8 +84,8 @@ def start_simulator(request, test):
 
 def get_test(request, test):
     size = request.GET.get('size')
-    print(size)
-    generator = test_generator.TestGenerator(test, 100)
+    print('aquiiiii - ' + size)
+    generator = test_generator.TestGenerator(test, int(size))
     data = generator.generateTest()
     return HttpResponse(data, content_type='application/json')
 
