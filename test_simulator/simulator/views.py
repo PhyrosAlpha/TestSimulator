@@ -105,14 +105,14 @@ def correct_test(request):
 
 
     #Corrigi o teste gerando o gabarito corrigido
-    intance_test_corrector = test_corrector.TestCorrector(user_answer_sheet, system_answer_sheet)
-    corrected_answer_sheet_user = intance_test_corrector.init_correction()
+    instance_test_corrector = test_corrector.TestCorrector(user_answer_sheet, system_answer_sheet)
+    corrected_answer_sheet_user = instance_test_corrector.init_correction()
 
-    print("DEPOIS DE CORRIGIR")
-    print("Corretas:{}    Incorretas:{}".format(corrected_answer_sheet_user.get_corrects(), corrected_answer_sheet_user.get_incorrects()))
-    print(corrected_answer_sheet_user)
-    for question in corrected_answer_sheet_user.questions:
-        print(question)
+    #print("DEPOIS DE CORRIGIR")
+    #print("Corretas:{}    Incorretas:{}".format(corrected_answer_sheet_user.get_corrects(), corrected_answer_sheet_user.get_incorrects()))
+    #print(corrected_answer_sheet_user)
+    #for question in corrected_answer_sheet_user.questions:
+    #    print(question)
     
     data = corrected_answer_sheet_user.serialize_to_json()
     print(data)

@@ -8,16 +8,16 @@ class TestCorrector:
         self.corrected_questions = []
     
     def init_correction(self):
-        print("CORRIGINDO ESSA BAGAÇA")
+        print("CORRIGINDO ESSA BAGAÇA6666")
         user_questions = self.user_answer_sheet.get_questions()
-
+        print("chegou até aqui")
         for user_question in user_questions:
             self.__correct_current_question(user_question)
         
-        correct_answer_sheet = AnswerSheetFactory.\
+        print("chegou até aqui222")
+        corrected_answer_sheet = AnswerSheetFactory.\
             get_corrected_answer_sheet(self.user_answer_sheet.get_test_id(), self.corrected_questions)
-
-        return correct_answer_sheet
+        return corrected_answer_sheet
 
     def __correct_current_question(self, user_question):
         system_question = self.system_answer_sheet.get_question(user_question.question_id)
@@ -27,13 +27,44 @@ class TestCorrector:
     def __compare_both_questions(self, user_question, system_question):
         user_answers = user_question.get_answers()
         system_answers = system_question.get_answers()
+        checked_user_answers = []
+        checked_system_answers = []
         corrected_answers = []
 
-        for answer_user in user_answers:
-            for i, system_answer in enumerate(system_answers):
-                if answer_user['option_id'] == system_answer['option_id']:
-                    answer_user['is_correct'] = True
-                    system_answers.pop(i)
+        for n, system_answer in enumerate(system_answers):
+            match = False
+            for user_answer in user_answers:
+                if user_answer['option_id'] == system_answer['option_id']:
+                    checked_user_answer = user_answer.copy()
+                    checked_user_answer['source'] = "user"
+                    checked_user_answer['is_correct'] = True
+                    checked_system_answer = system_answer.copy()
+                    checked_system_answer['source'] = "system"
+                    checked_system_answer['is_correct'] = True
+                    corrected_answers.append(checked_user_answer)
+                    corrected_answers.append(checked_system_answer)
+                    match = True
+                
+                if len(system_answers) - 1 == n and match == False:
+                    checked_user_answer = user_answer.copy()
+                    checked_user_answer['source'] = "user"
+                    checked_user_answer['is_correct'] = False
+                    checked_user_answers.append(checked_user_answer)
+
+            if match == False:
+                checked_system_answer = system_answer.copy()
+                checked_system_answer['source'] = "system"
+                checked_system_answer['is_correct'] = True
+                checked_system_answers.append(checked_system_answer)
+
+        corrected_answers += checked_user_answers
+        corrected_answers += checked_system_answers
+
+        corrected_question = QuestionAnswered(user_question.question_id, corrected_answers)
+        if len(corrected_answers) == 0 or len(checked_user_answers) == 0:
+            corrected_question.set_is_correct_to_true()
+
+        self.corrected_questions.append(corrected_question)    
 
 
 class AnswerSheetFactory():
@@ -43,7 +74,7 @@ class AnswerSheetFactory():
             question_answered = QuestionAnswered(question_json['question_id'], question_json['answers'])
             questions.append(question_answered)
 
-        user_answer_sheet = UserAnswerSheet(dict['test_id'], questions, user)
+        user_answer_sheet = UserAnswerSheet(dict['test_id'], questions)
         return user_answer_sheet
 
     def get_system_answer_sheet(test_id, questions_list):
@@ -54,7 +85,6 @@ class AnswerSheetFactory():
             correct_answers = []
             for option in question.get_correct_options():
                 correct_answers.append({'option_id':option.id, 'is_correct': option.is_correct})
-            system_answer_sheet.add_question(question.id, correct_answers)
 
             system_question = QuestionAnswered(question.id, correct_answers)
             questions.append(system_question)
@@ -103,12 +133,13 @@ class SystemAnswerSheet(AnswerSheet):
 
 
 class CorrectedAnswerSheet(AnswerSheet):
-    def __init__(self, test_id, questions, user):
-        self.user = user
+    def __init__(self, test_id, questions):
+        AnswerSheet.__init__(self, test_id, questions)
         self.corrects = 0
         self.incorrects = 0
         self.corrected = False
-        AnswerSheet.__init__(self, test_id, questions)
+
+        self.__set_corrected_to_true()
 
     def __set_corrected_to_true(self):
         self.corrected = True
@@ -117,17 +148,13 @@ class CorrectedAnswerSheet(AnswerSheet):
                 self.corrects += 1
         
         self.incorrects = len(self.questions) - self.corrects
+        print(self.corrects)
 
     def get_corrects(self):
         return self.corrects
 
     def get_incorrects(self):
         return self.incorrects
-
-    def __init__(self, question_id, answers):
-        self.question_id = question_id
-        self.answers = answers
-        self.is_correct = False
 
     def get_question_id(self):
         return self.question_id
@@ -140,6 +167,22 @@ class CorrectedAnswerSheet(AnswerSheet):
 
     def get_answers(self):
         return self.answers
+    
+    def serialize_to_json(self):
+        obj_dict = {}
+        obj_dict['test_id'] = self.test_id
+        obj_dict['corrected'] = self.corrected
+        obj_dict['corrects'] = self.corrects
+        obj_dict['incorrects'] = self.incorrects
+        obj_dict['questions'] = []
+
+        for question in self.questions:
+            obj_dict['questions'].append({
+                'question_id':question.get_question_id(),
+                'is_correct': question.get_is_correct(),
+                'answers': question.get_answers()
+            })
+        return dumps(obj_dict)
 
     def __str__(self) -> str:
         return "Id - {} | {} | Answers - {}".format(self.question_id, self.is_correct, self.answers)

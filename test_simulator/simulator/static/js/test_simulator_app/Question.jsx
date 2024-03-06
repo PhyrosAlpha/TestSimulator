@@ -15,6 +15,14 @@ const AnswerSheet = ({testData, handleJumpToQuestion}) => {
     }
 
     function renderAnswer(question, index) {
+        if(!testData.corrected){
+            return testStatus(question, index);
+        }else {
+            return correctedStatus(question, index);
+        }      
+    }
+
+    function testStatus(question, index) {
         let ANSWER_SHEET_ANSWER = ANSWER_SHEET_BLUE;
         let answers = question.answers;
         let answerSTR = "";
@@ -32,20 +40,47 @@ const AnswerSheet = ({testData, handleJumpToQuestion}) => {
             answerSTR = "Sem resposta";
         }
 
-        //Mode Corrected
-        if(testData.corrected){
-            if(question.is_correct){
-                ANSWER_SHEET_ANSWER = ANSWER_SHEET_GREEN;
-            }else {
-                ANSWER_SHEET_ANSWER = ANSWER_SHEET_RED;
-            }
+        return <p style={ANSWER_SHEET_ANSWER} 
+        onClick={() => {handleJumpToQuestion(index)}} 
+        className="ms-2" key={index}>
+            {index + 1} - {answerSTR}
+        </p>
+
+    }
+
+    function correctedStatus(question, index) {
+        let ANSWER_SHEET_ANSWER = ANSWER_SHEET_BLUE;
+        let answers = question.answers;
+        let answerSTR = "";
+        if(answers.length > 0) {
+            answers.forEach((answer, index) => {
+                if(answer.source === 'user'){
+                answerSTR += LETTERS[answer.option_index];
+                    if(index < answers.length - 1) {
+                        answerSTR += ", ";
+                    }
+                }
+            });
+            answerSTR = answerSTR.substring(0, answerSTR.length);
+            console.log(answerSTR)
+        }else {
+            ANSWER_SHEET_ANSWER = ANSWER_SHEET_RED
+            answerSTR = "Sem resposta";
         }
 
+
+        if(question.is_correct){
+            ANSWER_SHEET_ANSWER = ANSWER_SHEET_GREEN;
+        }else {
+            ANSWER_SHEET_ANSWER = ANSWER_SHEET_RED;
+        }
+        
         return <p style={ANSWER_SHEET_ANSWER} 
-                        onClick={() => {handleJumpToQuestion(index)}} 
-                        className="ms-2" key={index}>
-                            {index + 1} - {answerSTR}
-                        </p>
+        onClick={() => {handleJumpToQuestion(index)}} 
+        className="ms-2" key={index}>
+            {index + 1} - {answerSTR}
+        </p>
+
     }
 
     //Mode Corrected
