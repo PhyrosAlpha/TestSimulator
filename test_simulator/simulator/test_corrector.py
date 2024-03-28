@@ -8,13 +8,10 @@ class TestCorrector:
         self.corrected_questions = []
     
     def init_correction(self):
-        print("CORRIGINDO ESSA BAGAÇA6666")
         user_questions = self.user_answer_sheet.get_questions()
-        print("chegou até aqui")
         for user_question in user_questions:
             self.__correct_current_question(user_question)
         
-        print("chegou até aqui222")
         corrected_answer_sheet = AnswerSheetFactory.\
             get_corrected_answer_sheet(self.user_answer_sheet.get_test_id(), self.corrected_questions)
         return corrected_answer_sheet
@@ -25,46 +22,65 @@ class TestCorrector:
 
 
     def __compare_both_questions(self, user_question, system_question):
+        print("------------------------------------")
+        print("Question - " + str(user_question.get_question_id()))
         user_answers = user_question.get_answers()
         system_answers = system_question.get_answers()
         checked_user_answers = []
         checked_system_answers = []
         corrected_answers = []
 
+        print(user_question.get_answers())
+
         for n, system_answer in enumerate(system_answers):
             match = False
-            for user_answer in user_answers:
+            for y, user_answer in enumerate(user_answers):
+                print(y)
                 if user_answer['option_id'] == system_answer['option_id']:
-                    checked_user_answer = user_answer.copy()
-                    checked_user_answer['source'] = "user"
-                    checked_user_answer['is_correct'] = True
-                    checked_system_answer = system_answer.copy()
-                    checked_system_answer['source'] = "system"
-                    checked_system_answer['is_correct'] = True
-                    corrected_answers.append(checked_user_answer)
-                    corrected_answers.append(checked_system_answer)
+                    print("Veio aqui")
+                    checked_answer = {
+                        'option_id':user_answer['option_id'],
+                        'is_correct':True,
+                        'sources': ['user', 'system']
+                    }
+                    corrected_answers.append(checked_answer)
                     match = True
+                    user_answers.pop(y)
                 
                 if len(system_answers) - 1 == n and match == False:
                     checked_user_answer = user_answer.copy()
-                    checked_user_answer['source'] = "user"
+                    checked_user_answer['sources'] = ["user"]
                     checked_user_answer['is_correct'] = False
                     checked_user_answers.append(checked_user_answer)
 
             if match == False:
                 checked_system_answer = system_answer.copy()
-                checked_system_answer['source'] = "system"
+                checked_system_answer['sources'] = ["system"]
                 checked_system_answer['is_correct'] = True
                 checked_system_answers.append(checked_system_answer)
+
+        print(corrected_answers)
 
         corrected_answers += checked_user_answers
         corrected_answers += checked_system_answers
 
-        corrected_question = QuestionAnswered(user_question.question_id, corrected_answers)
-        if len(corrected_answers) == 0 or len(checked_user_answers) == 0:
-            corrected_question.set_is_correct_to_true()
 
-        self.corrected_questions.append(corrected_question)    
+        print(checked_user_answers)
+        print(checked_system_answers)
+
+        corrected_question = QuestionAnswered(user_question.question_id, corrected_answers)
+        result = self.__correct_question(user_answers, checked_system_answers, corrected_answers)
+        corrected_question.set_is_correct(result)
+
+        self.corrected_questions.append(corrected_question)
+
+    def __correct_question(self, user_answers, checked_system_answers, corrected_answers):
+        if len(user_answers) == 0:
+            return False
+
+        if len(checked_system_answers) == 0:
+            return True
+
 
 
 class AnswerSheetFactory():
@@ -148,7 +164,6 @@ class CorrectedAnswerSheet(AnswerSheet):
                 self.corrects += 1
         
         self.incorrects = len(self.questions) - self.corrects
-        print(self.corrects)
 
     def get_corrects(self):
         return self.corrects
@@ -197,8 +212,8 @@ class QuestionAnswered:
     def get_question_id(self):
         return self.question_id
 
-    def set_is_correct_to_true(self):
-        self.is_correct = True
+    def set_is_correct(self, value):
+        self.is_correct = value
 
     def get_is_correct(self):
         return self.is_correct
@@ -221,7 +236,6 @@ class AnswerSheetUser:
         self.corrects = 0
         self.incorrects = 0
 
-        print("Dentro - ", len(self.questions))
         for question_json in json['questions']:
             question_answered = QuestionAnswered(question_json['question_id'], question_json['answers'])
             self.questions.append(question_answered)

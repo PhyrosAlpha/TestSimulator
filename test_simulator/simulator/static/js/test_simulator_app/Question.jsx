@@ -172,3 +172,58 @@ function getImg(text){
         text = text.replace(getted_img, '<img src="' + getted_href + '" style="max-width:100%;"><br>');
     }
 }
+
+const Timer = ({timeIsOverEvent, minutes, active}) => {
+
+    const [now, setNow] = React.useState(new Date((minutes * 60 * 1000 + Date.now()) - Date.now()));
+    const [percent, setPercent] = React.useState(0);
+    const intervalId = React.useRef(null);
+
+    React.useEffect( () => {
+        let milesecondsTotal = minutes * 60 * 1000;
+        let whenTimeIsOver = Date.now() + milesecondsTotal;
+        
+        if(active){
+            let id = setInterval(() => {
+                let time = whenTimeIsOver - Date.now();
+                setNow(new Date(time));
+
+                let result = (time * 100) / milesecondsTotal;
+                setPercent(100-result);
+
+                if(time <= 0) {
+                    setNow(new Date(0));
+                    timeIsOverEvent();
+                    clearInterval(id);
+                }
+            }, 1000)
+            intervalId.current = id;
+        }
+
+    }, [])
+
+    React.useEffect(() => {
+        if(!active){
+            clearInterval(intervalId.current);
+        }
+    }, [active])
+
+    function renderColor() {
+        return percent <= 80 ? "bg-success" : "bg-danger"
+    }
+
+    function renderTime(){
+        let minutes = now.getMinutes().toString().padStart(2, '0');
+        let seconds = now.getSeconds().toString().padStart(2, '0');
+        return `${minutes}:${seconds}`
+    }
+
+    return(
+        <div>
+            {renderTime()}
+            <div className="progress mb-2" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+                <div className={`progress-bar ${renderColor()}`}  style={{width:`${percent}%`}}></div>
+            </div>
+        </div>
+    )
+}

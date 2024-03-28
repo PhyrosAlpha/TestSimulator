@@ -7,7 +7,9 @@ const TestSimulator = ({test_id, test_size}) => {
     const [ target, setTarget ] = React.useState(0);
     const testData = React.useRef({});
     const modalController = React.useRef();
-    const [ loading, setLoading ] = React.useState(false)
+    const [ loading, setLoading ] = React.useState(false);
+    const [ activedTimer, setActivedTimer ] = React.useState(true);
+    const [ percent, setPercent ] = React.useState(0);
 
     React.useEffect( () => {
         async function fetchData() {
@@ -34,22 +36,26 @@ const TestSimulator = ({test_id, test_size}) => {
     }
 
     function handleNext() {
+        renderTestPercent()
         if(questions.length > target + 1){
             setTarget(target + 1);
         }
     }
 
     function handlePrevious() {
+        renderTestPercent()
         if(target > 0){
             setTarget(target - 1);
         }
     }
 
     function handleGoAnswerSheet() {
+        renderTestPercent()
         setTarget(questions.length);
     }
 
     function handleJumpToQuestion(index) {
+        renderTestPercent()
         setTarget(index);
     }
 
@@ -77,6 +83,7 @@ const TestSimulator = ({test_id, test_size}) => {
             testData.current = new TestData(data.question_id, data.questions, true);
             testData.current.setPontuation(data.corrects, data.incorrects);
             modalController.current.closeModal();
+            setActivedTimer(false);
             setLoading(false);
         }
         setLoading(true)
@@ -101,10 +108,9 @@ const TestSimulator = ({test_id, test_size}) => {
     }
 
     function renderTestPercent() {
-        if(Object.keys(testData.current).length > 0 ){
-            return testData.current.getTestPercent()
+        if(Object.keys(testData.current).length > 0 && testData.current.corrected === false ){
+            setPercent(testData.current.getTestPercent());
         }
-        return 0;
     }
 
     return (
@@ -118,11 +124,17 @@ const TestSimulator = ({test_id, test_size}) => {
                 :
                 <div>
                     <div>
-                        <i className="bi bi-bar-chart-steps"></i>
+                        {/*<i className="bi bi-bar-chart-steps"></i>*/}
+                        {percent}%
                         <div className="progress mb-2" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-                            <div className="progress-bar" style={{width:`${renderTestPercent()}%`}}></div>
+                            <div className="progress-bar progress-bar-striped" style={{width:`${percent}%`}}></div>
                         </div>
                     </div>
+                    <Timer minutes={1} active={activedTimer} timeIsOverEvent={() => {
+                        console.log("UHUUU disparou");
+                        //handleGoAnswerSheet();
+                        //sendTest();
+                    }}/>
                     <div className="card mb-2">
                         <div className="card-body" style={QUESTIONS_CSS}>
                             {renderBody()}

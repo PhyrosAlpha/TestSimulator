@@ -13,7 +13,7 @@ from .forms import SelectSimulationTestForm
 
 def home(request):
     template = loader.get_template('home.html')
-    return HttpResponse(template.render())
+    return HttpResponse(template.render(request=request))
 
 def login(request):
     if(request.user.is_authenticated):
@@ -101,7 +101,10 @@ def correct_test(request):
 
     #Cria gabarito do Sistema, com as respostas corretas
     questions_list = user_answer_sheet.get_questions_list()
+    test_id = 1
+    questions = [90, 105, 180, 93, 133, 128, 164, 76, 67, 187]
     system_answer_sheet = test_corrector.AnswerSheetFactory.get_system_answer_sheet(test_user_dict['test_id'], questions_list)
+    #system_answer_sheet = test_corrector.AnswerSheetFactory.get_system_answer_sheet(test_id, questions)
 
 
     #Corrigi o teste gerando o gabarito corrigido
@@ -117,29 +120,3 @@ def correct_test(request):
     data = corrected_answer_sheet_user.serialize_to_json()
     print(data)
     return HttpResponse(data, content_type='application/json')
-
-"""
-@csrf_exempt
-def correct_test(request):
-    print("SEND TEST")
-    print(loads(request.body))
-
-    test_user_json = loads(request.body)
-    answer_sheet_user = test_corrector.AnswerSheetUser(test_user_json, request.user)
-
-    questions_list = answer_sheet_user.get_questions_list()
-    generator_answer_sheet_test = test_corrector.GeneratorAnswerSheetTest(questions_list)
-    answer_sheet_test = generator_answer_sheet_test.generate()
-    intance_test_corrector = test_corrector.TestCorrector(answer_sheet_user, answer_sheet_test)
-    corrected_answer_sheet_user = intance_test_corrector.init_correction()
-
-    print("DEPOIS DE CORRIGIR")
-    print("Corretas:{}    Incorretas:{}".format(corrected_answer_sheet_user.get_corrects(), corrected_answer_sheet_user.get_incorrects()))
-    print(corrected_answer_sheet_user)
-    for question in corrected_answer_sheet_user.questions:
-        print(question)
-    
-    data = corrected_answer_sheet_user.serialize_to_json()
-    print(data)
-    return HttpResponse(data, content_type='application/json')
-"""
